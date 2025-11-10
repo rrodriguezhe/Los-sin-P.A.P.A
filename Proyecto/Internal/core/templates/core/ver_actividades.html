@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="es">
 <head>
+  <link rel="import" href="core/Negocio/auth">
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Parchate · Inicio</title>
@@ -100,7 +101,7 @@
         <a class="nav-btn current" href="/actividades/" aria-current="page">Inicio / Actividades</a>
         <a class="nav-btn cta" href="/area_privada/" aria-label="Ir a área privada y gestión del tiempo">Área privada y gestión del tiempo</a>
         <a class="nav-btn" href="19_profile.html">Perfil de usuario</a>
-        <button class="nav-btn" id="logout" type="button">Cerrar sesión</button>
+        <a class="nav-btn" href="/logout/">Cerrar sesión</a>
       </nav>
     </aside>
 
@@ -120,18 +121,18 @@
           <div class="spacer"></div>
           <!-- Indicador visible de sesión activa: avatar + nombre en menu -->
           <button id="avatarBtn" class="avatar" aria-haspopup="menu" aria-expanded="false" aria-controls="menuUser" aria-label="Menú de cuenta">
-            {{ username|default:"U"|slice:":1"|upper }}
+            {{ request.session.username|slice:":1"|upper }}
           </button>
           <nav id="menuUser" class="menu" role="menu" aria-label="Menú de cuenta">
             <a href="#" role="menuitem" aria-label="Ver perfil">Perfil</a>
             <a href="#" role="menuitem" aria-label="Ver mis actividades">Mis actividades</a>
-            <a href="/login/" role="menuitem" aria-label="Cerrar sesión">Cerrar sesión</a>
+            <a href="/logout/" role="menuitem" aria-label="Cerrar sesión">Cerrar sesión</a>
           </nav>
         </div>
       </header>
-
+      
       <section class="welcome" aria-live="polite">
-        <h2 id="welcomeText">¡Hola, {{ username }}! Bienvenido a Parchate.</h2>
+        <h2 id="welcomeText">¡Hola, {{ request.session.username }}! Bienvenido a Parchate.</h2>
         <p class="meta">Explora actividades cercanas o crea la tuya.</p>
       </section>
 
@@ -147,7 +148,7 @@
                 </div>
                 <div class="meta">{{ a.fecha_hora_inicio|date:"d M Y - H:i" }} · {{ a.ubicacion|default:"Sin ubicación" }}</div>
                 <div class="meta">Participantes: {{ a.participantes_count }}{% if a.cupos %} / {{ a.cupos }}{% endif %}</div>
-                <button class="btn btn-join" aria-label="Ver detalles de {{ a.nombre_actividad }}">Ver detalles</button>
+                <a class="btn btn-join" href="{% url 'detalles_actividad' a.id %}" aria-label="Ver detalles de {{ a.nombre_actividad }}">Ver detalles</a>
               </article>
             {% endfor %}
           {% else %}
@@ -195,7 +196,7 @@
     document.getElementById('logout')?.addEventListener('click', ()=> {
       localStorage.removeItem('parchate_user');
       // demo: redirigir a pantalla de bienvenida
-      location.href = '01_welcome.html';
+      location.href = 'home.html';
     });
   </script>
 </body>
